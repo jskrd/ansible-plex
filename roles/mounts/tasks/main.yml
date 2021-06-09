@@ -1,0 +1,29 @@
+---
+- name: Install CIFS utilities
+  apt:
+    pkg: cifs-utils
+    update_cache: yes
+
+- name: Create website configuration
+  template:
+    src: nas-credentials.j2
+    dest: /etc/nas-credentials
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Mount backup network share
+  mount:
+    src: //nas.lan/plex-backup
+    path: /mnt/nas/plex-backup
+    fstype: cifs
+    opts: credentials=/etc/nas-credentials,uid=997,gid=997,dir_mode=0755,file_mode=0755
+    state: mounted
+
+- name: Mount media network share
+  mount:
+    src: //nas.lan/media
+    path: /mnt/nas/media
+    fstype: cifs
+    opts: credentials=/etc/nas-credentials,uid=997,gid=997,dir_mode=0755,file_mode=0755
+    state: mounted

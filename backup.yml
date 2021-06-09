@@ -1,0 +1,20 @@
+---
+- hosts: all
+  remote_user: joe
+  become: yes
+  tasks:
+    - name: Stop Plex Media Server service
+      service:
+        name: plexmediaserver
+        state: stopped
+    - name: Compress Plex Media Server data from server to NAS
+      archive:
+        path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+        dest: /mnt/nas/plex-backup/plexmediaserver.tgz
+        owner: plex
+        group: plex
+        mode: 0644
+    - name: Start Plex Media Server service
+      service:
+        name: plexmediaserver
+        state: started

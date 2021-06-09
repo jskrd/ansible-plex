@@ -1,0 +1,28 @@
+---
+- hosts: all
+  remote_user: joe
+  become: yes
+  tasks:
+    - name: Stop Plex Media Server service
+      service:
+        name: plexmediaserver
+        state: stopped
+    - name: Remove any existing Plex Media Server data
+      file:
+        path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+        state: absent
+    - name: Extract Plex Media Server data from NAS to server
+      unarchive:
+        src: /mnt/nas/plex-backup/plexmediaserver.tgz
+        dest: /var/lib/plexmediaserver/Library/Application Support/
+        remote_src: yes
+    - name: Set Plex Media Server data permissions
+      file:
+        path: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server
+        owner: plex
+        group: plex
+        state: directory
+    - name: Start Plex Media Server service
+      service:
+        name: plexmediaserver
+        state: started

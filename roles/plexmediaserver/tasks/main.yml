@@ -1,0 +1,22 @@
+---  
+- name: Add Plex signing key
+  apt_key:
+    url: https://downloads.plex.tv/plex-keys/PlexSign.key
+    state: present
+
+- name: Add official Plex repository to sources list
+  apt_repository:
+    repo: deb https://downloads.plex.tv/repo/deb public main
+    state: present
+    filename: plexmediaserver
+
+- name: Install Plex Media Server
+  apt:
+    pkg: plexmediaserver
+    update_cache: yes
+
+- name: Enable Plex Media Server service
+  service:
+    name: plexmediaserver
+    state: started
+    enabled: yes
